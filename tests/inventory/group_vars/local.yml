@@ -1,1 +1,34 @@
 ---
+inv_prepare_host_users:
+  - login: "root"
+    group: "mysql"
+
+inv_install_mariadb_confs_path: "/etc/mysql"
+inv_install_mariadb_config_path: "{{ inv_install_mariadb_confs_path }}/mariadb.conf.d"
+inv_install_mariadb_ssl_path: "{{ inv_install_mariadb_confs_path }}/ssl"
+inv_install_mariadb_log_path: "/var/log/mysql"
+
+inv_install_mariadb_port: 3306
+inv_install_mariadb_bind_address: "0.0.0.0"
+#inv_install_mariadb_server_id: 1
+
+inv_install_mariadb_max_connections: 200
+inv_install_mariadb_table_cache: 128
+inv_install_mariadb_thread_concurrency: 10
+
+inv_install_mariadb_general_log_file: "{{ inv_install_mariadb_log_path }}/mysql.log"
+inv_install_mariadb_general_log: 1
+inv_install_mariadb_log_error: "{{ inv_install_mariadb_log_path }}/mysql-error.log"
+inv_install_mariadb_log_bin: "{{ inv_install_mariadb_log_path }}/mysql-bin.log"
+inv_install_mariadb_expire_logs_days: 30
+inv_install_mariadb_max_binlog_size: "100M"
+
+
+inv_install_mariadb_ssl: true
+inv_install_mariadb_ssl_client_auth: true
+inv_install_mariadb_ssl_ca: "{{ inv_install_mariadb_ssl_path }}/my-mariadb-cluster.domain.tld/ca-chain.pem.crt"
+inv_install_mariadb_ssl_cert: "{{ inv_install_mariadb_ssl_path }}/my-mariadb-cluster.domain.tld/my-mariadb-cluster.domain.tld.pem.crt"
+inv_install_mariadb_ssl_key: "{{ inv_install_mariadb_ssl_path }}/my-mariadb-cluster.domain.tld/my-mariadb-cluster.domain.tld.pem.key"
+
+inv_install_mariadb_charset: "utf8mb4"
+inv_install_mariadb_collation: "utf8mb4_general_ci"

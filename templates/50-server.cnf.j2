@@ -1,0 +1,141 @@
+##############################
+#                            #
+# Ansible / Tower managed on #
+#                            #
+##############################
+
+#
+# These groups are read by MariaDB server.
+# Use it for options that only the server (but not clients) should see
+#
+# See the examples of server my.cnf files in /usr/share/mysql/
+#
+
+# this is read by the standalone daemon and embedded servers
+[server]
+
+# this is only for the mysqld standalone daemon
+[mysqld]
+
+#
+# * Basic Settings
+#
+user            = mysql
+pid-file        = /var/run/mysqld/mysqld.pid
+socket          = /var/run/mysqld/mysqld.sock
+port            = {{ install_mariadb_port }}
+basedir         = /usr
+datadir         = /var/lib/mysql
+tmpdir          = /tmp
+lc-messages-dir = /usr/share/mysql
+skip-external-locking
+
+# Instead of skip-networking the default is now to listen only on
+# localhost which is more compatible and is not less secure.
+#bind-address            = 127.0.0.1
+bind-address             = {{ install_mariadb_bind_address }}
+
+#
+# * Fine Tuning
+#
+key_buffer_size         = 32M
+max_allowed_packet      = 32M
+thread_stack            = 384K
+thread_cache_size       = 16
+# This replaces the startup script and checks MyISAM tables if needed
+# the first time they are touched
+myisam-recover         = BACKUP
+max_connections        = {{ install_mariadb_max_connections }}
+table_cache            = {{ install_mariadb_table_cache }}
+thread_concurrency     = {{ install_mariadb_thread_concurrency }}
+
+#
+# * Query Cache Configuration
+#
+query_cache_limit       = 2M
+query_cache_size        = 32M
+
+#
+# * Logging and Replication
+#
+# Both location gets rotated by the cronjob.
+# Be aware that this log type is a performance killer.
+# As of 5.1 you can enable the log at runtime!
+general_log_file        = {{ install_mariadb_general_log_file }}
+general_log             = {{ install_mariadb_general_log }}
+#
+# Error log - should be very few entries.
+#
+log_error = {{ install_mariadb_log_error}}
+#
+# Enable the slow query log to see queries with especially long duration
+#slow_query_log_file    = /var/log/mysql/mariadb-slow.log
+#long_query_time = 10
+#log_slow_rate_limit    = 1000
+#log_slow_verbosity     = query_plan
+#log-queries-not-using-indexes
+#
+# The following can be used as easy to replay backup logs or for replication.
+# note: if you are setting up a replication slave, see README.Debian about
+#       other settings you may need to change.
+server-id              = {{ install_mariadb_server_id }}
+log_bin                = {{ install_mariadb_log_bin }}
+expire_logs_days       = {{ install_mariadb_expire_logs_days }}
+max_binlog_size        = {{ install_mariadb_max_binlog_size }}
+#binlog_do_db          = include_database_name
+#binlog_ignore_db      = include_database_name
+
+#
+# * InnoDB
+#
+# InnoDB is enabled by default with a 10MB datafile in /var/lib/mysql/.
+# Read the manual for more InnoDB related options. There are many!
+
+#
+# * Security Features
+#
+# Read the manual, too, if you want chroot!
+# chroot = /var/lib/mysql/
+#
+# For generating SSL certificates I recommend the OpenSSL GUI "tinyca".
+#
+# ssl-ca=/etc/mysql/cacert.pem {{ install_mariadb_ssl_ca }}
+# ssl-cert=/etc/mysql/server-cert.pem {{ install_mariadb_ssl_cert }}
+# ssl-key=/etc/mysql/server-key.pem {{ install_mariadb_ssl_key }}
+{% if install_mariadb_ssl | default(false) %}
+{% if install_mariadb_ssl_client_auth | default(false) %}
+ssl-ca   = {{ install_mariadb_ssl_ca }}
+{% endif %}
+ssl-cert = {{ install_mariadb_ssl_cert }}
+ssl-key  = {{ install_mariadb_ssl_key }}
+{% endif %}
+#
+# * Character sets
+#
+# MySQL/MariaDB default is Latin1, but in Debian we rather default to the full
+# utf8 4-byte character set. See also client.cnf
+#
+character-set-server  = {{ install_mariadb_charset }}
+collation-server      = {{ install_mariadb_collation }}
+
+#
+# * Unix socket authentication plugin is built-in since 10.0.22-6
+#
+# Needed so the root database user can authenticate without a password but
+# only when running as the unix root user.
+#
+# Also available for other users if required.
+# See https://mariadb.com/kb/en/unix_socket-authentication-plugin/
+
+# this is only for embedded server
+[embedded]
+
+# This group is only read by MariaDB servers, not by MySQL.
+# If you use the same .cnf file for MySQL and MariaDB,
+# you can put MariaDB-only options here
+[mariadb]
+
+# This group is only read by MariaDB-10.0 servers.
+# If you use the same .cnf file for MariaDB of different versions,
+# use this group for options that older servers don't understand
+[mariadb-10.0]

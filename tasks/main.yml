@@ -1,1 +1,40 @@
 ---
+- name: "Install MariaDB"
+  notify: "Enable and start MariaDB"
+  ansible.builtin.package:
+    update_cache: yes
+    name:
+      - "mariadb-client"
+      - "mariadb-server"
+
+- name: "Configure MariaDB"
+  notify: "Restart MariaDB"
+  block:
+    - name: "Import MariaDB configuration file"
+      ansible.builtin.template:
+        src: "templates/50-server.cnf.j2"
+        dest: "{{ install_mariadb_config_path }}/50-server.cnf"
+        owner: "{{ install_mariadb_user }}"
+        group: "{{ install_mariadb_group }}"
+        mode: "0700"
+        lstrip_blocks: yes
+
+    - name: "Apply permissions on MariaDB conf dir"
+      ansible.builtin.file:
+        path: "{{ install_mariadb_confs_path }}"
+        state: directory
+        recurse: yes
+        owner: "{{ install_mariadb_user }}"
+        group: "{{ install_mariadb_group }}"
+        mode: "0700"
+
+    - name: "Create log dirs"
+      register: output
+      changed_when: output.size < 0
+      ansible.builtin.file:
+        path: "{{ install_mariadb_log_path }}"
+        state: directory
+        recurse: yes
+        owner: "{{ install_mariadb_user }}"
+        group: "{{ install_mariadb_group }}"
+        mode: "0700"

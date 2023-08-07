@@ -5,3 +5,21 @@
   hosts: "all"
   gather_facts: false
   tasks:
+
+    - name: "Get MariaDB service current state"
+      register: install_mariadb_service_status
+      failed_when: not install_mariadb_service_status.status.ActiveState == 'active'
+      ansible.builtin.systemd:
+        name: "mariadb"
+
+    - name: "Check MariaDB configuration file"
+      register: file_stat
+      failed_when: not file_stat.stat.exists
+      ansible.builtin.stat:
+        path: "{{ inv_install_mariadb_config_path }}/50-server.cnf"
+
+    - name: "Check Redis connectivity"
+      ansible.builtin.wait_for:
+        host: "{{ inventory_hostname }}"
+        port: "{{ inv_install_mariadb_port }}"
+        timeout: 120

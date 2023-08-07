@@ -140,6 +140,11 @@ Here you can put your change to keep a trace of your work and decisions.
 ### 2023-08-07: First Init
 
 * First init of this role with the bootstrap_role playbook by Lord Robin Crombez
+* Role install Mariadb
+* Role handle constom conf
+* Role handle SSL/TLS + mTLS but required previously created certs
+* Customization for cluster prepared
+* Fix logging
 
 ## Authors
 
@@ -149,3 +154,4 @@ Here you can put your change to keep a trace of your work and decisions.
 
 * [Ansible role documentation](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse_roles.html)
 * [Ansible Molecule documentation](https://molecule.readthedocs.io/)
+* [How To Install MariaDB on Debian 11](https://www.digitalocean.com/community/tutorials/how-to-install-mariadb-on-debian-11)
