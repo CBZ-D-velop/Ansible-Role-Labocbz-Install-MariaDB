@@ -1,4 +1,3 @@
-
 ---
 install_mariadb_confs_path: "/etc/mysql"
 install_mariadb_config_path: "{{ install_mariadb_confs_path }}/mariadb.conf.d"
