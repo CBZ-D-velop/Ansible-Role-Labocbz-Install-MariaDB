@@ -20,8 +20,8 @@ install_mariadb_expire_logs_days: 30
 install_mariadb_max_binlog_size: "100M"
 
 
-install_mariadb_ssl: false
-install_mariadb_ssl_client_auth: false
+install_mariadb_ssl: true
+install_mariadb_ssl_client_auth: true
 install_mariadb_ssl_ca: "{{ install_mariadb_ssl_path }}/ca.cert"
 install_mariadb_ssl_cert: "{{ install_mariadb_ssl_path }}/cert.pem"
 install_mariadb_ssl_key: "{{ install_mariadb_ssl_path }}/key.pem"
@@ -31,3 +31,12 @@ install_mariadb_collation: "utf8mb4_general_ci"
 
 install_mariadb_user: "mysql"
 install_mariadb_group: "mysql"
+
+install_mariadb_galera_cluster: true
+install_mariadb_galera_clustername: "my-Galera-cluster"
+install_mariadb_galera_node_name: "{{ inventory_hostname }}"
+install_mariadb_galera_node_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+install_mariadb_galera_node_list: "127.0.0.1"
+install_mariadb_galera_replication_port: 4567
+install_mariadb_galera_sst_port: 4444
+install_mariadb_galera_ist_port: 4568

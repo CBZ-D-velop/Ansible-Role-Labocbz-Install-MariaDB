@@ -18,7 +18,7 @@
       ansible.builtin.stat:
         path: "{{ inv_install_mariadb_config_path }}/50-server.cnf"
 
-    - name: "Check Redis connectivity"
+    - name: "Check Mariadb connectivity"
       ansible.builtin.wait_for:
         host: "{{ inventory_hostname }}"
         port: "{{ inv_install_mariadb_port }}"
