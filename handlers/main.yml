@@ -1,17 +1,3 @@
-- name: "Stop MariaDB"
-  register: install_mariadb_service_status
-  changed_when: not install_mariadb_service_status.state != "stoped"
-  throttle: 1
-  ansible.builtin.service:
-    name: "mariadb"
-    state: "stopped"
-
-- name: "Bootstrap Galera Cluster"
-  run_once: true
-  register: output
-  changed_when: output.rc != 0
-  ansible.builtin.command: "galera_new_cluster"
-
 - name: "Enable and start MariaDB"
   register: install_mariadb_service_status
   changed_when: not install_mariadb_service_status.state != "started"

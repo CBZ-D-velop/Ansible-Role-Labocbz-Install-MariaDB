@@ -24,8 +24,8 @@ inv_install_mariadb_expire_logs_days: 30
 inv_install_mariadb_max_binlog_size: "100M"
 
 
-inv_install_mariadb_ssl: false
-inv_install_mariadb_ssl_client_auth: false
+inv_install_mariadb_ssl: true
+inv_install_mariadb_ssl_client_auth: true
 inv_install_mariadb_ssl_ca: "{{ inv_install_mariadb_ssl_path }}/my-mariadb-cluster.domain.tld/ca-chain.pem.crt"
 inv_install_mariadb_ssl_cert: "{{ inv_install_mariadb_ssl_path }}/my-mariadb-cluster.domain.tld/my-mariadb-cluster.domain.tld.pem.crt"
 inv_install_mariadb_ssl_key: "{{ inv_install_mariadb_ssl_path }}/my-mariadb-cluster.domain.tld/my-mariadb-cluster.domain.tld.pem.key"
@@ -34,4 +34,5 @@ inv_install_mariadb_charset: "utf8mb4"
 inv_install_mariadb_collation: "utf8mb4_general_ci"
 
 
-install_mariadb_galera_node_list: "172.17.0.3,172.17.0.4,172.17.0.5"
+install_mariadb_galera_node_list: "molecule-local-instance-1-install-mariadb,molecule-local-instance-2-install-mariadb,molecule-local-instance-3-install-mariadb"
+install_mariadb_galera_cluster_seed_host: "molecule-local-instance-1-install-mariadb"

@@ -20,13 +20,3 @@ innodb_buffer_pool_size=128M
 wsrep_node_address="{{ install_mariadb_galera_node_address }}"
 bind-address="{{ install_mariadb_bind_address }}"
 wsrep_cluster_address="gcomm://{{ install_mariadb_galera_node_list }}"
-
-{% if install_mariadb_ssl | default(false) %}
-# SSL/TLS & mTLS
-wsrep_provider_options="socket.ssl"
-{% if install_mariadb_ssl_client_auth | default(false) %}
-wsrep_provider_options="socket.ssl_ca={{ install_mariadb_ssl_ca }}"
-{% endif %}
-wsrep_provider_options="socket.ssl_cert={{ install_mariadb_ssl_cert }}"
-wsrep_provider_options="socket.ssl_key={{ install_mariadb_ssl_key }}"
-{% endif %}
