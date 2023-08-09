@@ -62,6 +62,19 @@
         mode: "0700"
         lstrip_blocks: yes
 
+- name: "Remove Galera Cluster"
+  when: not (install_mariadb_galera_cluster | default(false))
+  block:
+    - name: "Check if the 99-galera.cnf file exist"
+      register: file_check
+      ansible.builtin.stat:
+        path: "{{ install_mariadb_config_path }}/99-galera.cnf"
+
+    - name: "Remove the 99-galera.cnf file"
+      ansible.builtin.file:
+        path: "{{ install_mariadb_config_path }}/99-galera.cnf"
+        state: absent
+
 - name: "Start or restart the cluster"
   when: galera_config_result.changed and (install_mariadb_galera_cluster | default(false))
   notify: "Enable and start MariaDB"
@@ -120,6 +133,38 @@
       when: not file_check.stat.exists
       run_once: true
       delegate_to: "{{ install_mariadb_galera_cluster_seed_host }}"
-      register: output
-      changed_when: output.rc != 0
       ansible.builtin.command: "galera_new_cluster"
+
+- name: "Secure installation"
+  run_once: true
+  delegate_to: "{{ install_mariadb_galera_cluster_seed_host }}"
+  block:
+      - name: "Change root password"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.shell: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ install_mariadb_secure_root_password }}';\""
+
+      - name: "Remove anonymous users"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.shell: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"DELETE FROM mysql.user WHERE User='';\""
+
+      - name: "Disable root log remotely"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.shell: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');\""
+
+      - name: "Drop tests databases"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.shell: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"DROP DATABASE IF EXISTS test;\""
+
+      - name: "Drop tests databases"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.shell: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"DELETE FROM mysql.db WHERE Db='test' OR Db='test\\\\_%';\""
+
+      - name: "Flush privileges"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.shell: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"FLUSH PRIVILEGES;\""

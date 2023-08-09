@@ -33,6 +33,14 @@ inv_install_mariadb_ssl_key: "{{ inv_install_mariadb_ssl_path }}/my-mariadb-clus
 inv_install_mariadb_charset: "utf8mb4"
 inv_install_mariadb_collation: "utf8mb4_general_ci"
 
+inv_install_mariadb_galera_cluster: true
+inv_install_mariadb_galera_clustername: "my-Galera-cluster"
+inv_install_mariadb_galera_node_name: "{{ inventory_hostname }}"
+inv_install_mariadb_galera_node_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+inv_install_mariadb_galera_node_list:
+  - "molecule-local-instance-1-install-mariadb"
+  - "molecule-local-instance-2-install-mariadb"
+  - "molecule-local-instance-3-install-mariadb"
+inv_install_mariadb_galera_cluster_seed_host: "molecule-local-instance-1-install-mariadb"
 
-install_mariadb_galera_node_list: "molecule-local-instance-1-install-mariadb,molecule-local-instance-2-install-mariadb,molecule-local-instance-3-install-mariadb"
-install_mariadb_galera_cluster_seed_host: "molecule-local-instance-1-install-mariadb"
+inv_install_mariadb_secure_root_password: "PN$^L8zP*wm@3q"

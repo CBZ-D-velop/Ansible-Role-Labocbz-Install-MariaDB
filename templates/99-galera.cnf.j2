@@ -19,4 +19,4 @@ innodb_buffer_pool_size=128M
 # Network Ports
 wsrep_node_address="{{ install_mariadb_galera_node_address }}"
 bind-address="{{ install_mariadb_bind_address }}"
-wsrep_cluster_address="gcomm://{{ install_mariadb_galera_node_list }}"
+wsrep_cluster_address="gcomm://{{ install_mariadb_galera_node_list | join(',') }}"

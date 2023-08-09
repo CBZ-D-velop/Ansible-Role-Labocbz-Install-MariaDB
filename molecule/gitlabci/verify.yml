@@ -23,3 +23,31 @@
         host: "{{ inventory_hostname }}"
         port: "{{ inv_install_mariadb_port }}"
         timeout: 120
+
+    - name: "Check Cluster health"
+      when: inv_install_mariadb_galera_cluster | default(false)
+      block:
+        - name: "Check Galera replciation connectivities"
+          loop: "{{ inv_install_mariadb_galera_node_list }}"
+          loop_control:
+            loop_var: node
+          ansible.builtin.wait_for:
+            host: "{{ node }}"
+            port: "4567"
+            timeout: 120
+
+        - name: Set expected cluster size
+          ansible.legacy.set_fact:
+            expected_cluster_size: "{{ inv_install_mariadb_galera_node_list | length }}"
+
+        - name: "Get Galera Cluster Size from MySQL"
+          register: galera_cluster_size_result
+          failed_when: galera_cluster_size_result.stdout != expected_cluster_size
+          changed_when: galera_cluster_size_result.rc != 0
+          ansible.builtin.shell: "mysql -u root --password='{{ inv_install_mariadb_secure_root_password }}' --execute=\"SHOW STATUS LIKE 'wsrep_cluster_size';\" | grep -oP '\\d+'"
+
+        - name: "Get Galera Cluster State from MySQL"
+          register: galera_cluster_synced_result
+          failed_when: galera_cluster_synced_result.stdout_lines[1] != "wsrep_local_state_comment\tSynced"
+          changed_when: galera_cluster_synced_result.rc != 0
+          ansible.builtin.shell: "mysql -u root --password='{{ inv_install_mariadb_secure_root_password }}' --execute=\"SHOW STATUS LIKE 'wsrep_local_state_comment';\""
