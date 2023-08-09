@@ -39,8 +39,14 @@
         group: "{{ install_mariadb_group }}"
         mode: "0700"
 
+- name: "Configure Galera Cluster"
+  notify:
+    - "Stop MariaDB"
+    - "Bootstrap Galera Cluster"
+    - "Enable and start MariaDB"
+  when: install_mariadb_galera_cluster | default(false)
+  block:
     - name: "Import MariaDB Galera configuration file"
-      when: install_mariadb_galera_cluster | default(false)
       ansible.builtin.template:
         src: "templates/99-galera.cnf.j2"
         dest: "{{ install_mariadb_config_path }}/99-galera.cnf"

@@ -17,13 +17,9 @@ innodb_autoinc_lock_mode=2
 innodb_buffer_pool_size=128M
 
 # Network Ports
-port="{{ install_mariadb_port }}"
 wsrep_node_address="{{ install_mariadb_galera_node_address }}"
 bind-address="{{ install_mariadb_bind_address }}"
 wsrep_cluster_address="gcomm://{{ install_mariadb_galera_node_list }}"
-wsrep_provider_options="gmcast.listen_addr=tcp://0.0.0.0:{{ install_mariadb_galera_replication_port }}"
-wsrep_sst_receive_address="{{ install_mariadb_galera_sst_port }}"
-wsrep_provider_options="ist.recv_addr={{ install_mariadb_galera_ist_port }}"
 
 {% if install_mariadb_ssl | default(false) %}
 # SSL/TLS & mTLS
