@@ -1,1 +1,41 @@
 ---
+install_mariadb_confs_path: "/etc/mysql"
+install_mariadb_config_path: "{{ install_mariadb_confs_path }}/mariadb.conf.d"
+install_mariadb_ssl_path: "{{ install_mariadb_confs_path }}/ssl"
+install_mariadb_log_path: "/var/log/mysql"
+
+install_mariadb_port: 3306
+install_mariadb_bind_address: "0.0.0.0"
+install_mariadb_server_id: 1
+
+install_mariadb_max_connections: 500
+install_mariadb_innodb_buffer_pool_size: 1
+
+install_mariadb_general_log_file: "{{ install_mariadb_log_path }}/mysql.log"
+install_mariadb_general_log: 1
+install_mariadb_log_error: "{{ install_mariadb_log_path }}/mysql-error.log"
+install_mariadb_log_bin: "{{ install_mariadb_log_path }}/mysql-bin.log"
+install_mariadb_expire_logs_days: 30
+install_mariadb_max_binlog_size: "100M"
+
+install_mariadb_ssl: true
+install_mariadb_ssl_client_auth: true
+install_mariadb_ssl_ca: "{{ install_mariadb_ssl_path }}/ca.cert"
+install_mariadb_ssl_cert: "{{ install_mariadb_ssl_path }}/cert.pem"
+install_mariadb_ssl_key: "{{ install_mariadb_ssl_path }}/key.pem"
+
+install_mariadb_charset: "utf8mb4"
+install_mariadb_collation: "utf8mb4_general_ci"
+
+install_mariadb_user: "mysql"
+install_mariadb_group: "mysql"
+
+install_mariadb_galera_cluster: true
+install_mariadb_galera_clustername: "my-Galera-cluster"
+install_mariadb_galera_node_name: "{{ inventory_hostname }}"
+install_mariadb_galera_node_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+install_mariadb_galera_node_list:
+  - "127.0.0.1"
+install_mariadb_galera_cluster_seed_host: "{{ inventory_hostname }}"
+
+install_mariadb_secure_root_password: "myPass"

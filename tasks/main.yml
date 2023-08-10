@@ -1,1 +1,185 @@
 ---
+- name: "Install MariaDB"
+  notify: "Enable and start MariaDB"
+  ansible.builtin.package:
+    update_cache: yes
+    name:
+      - "mariadb-client"
+      - "mariadb-server"
+
+- name: "Configure MariaDB"
+  notify: "Restart MariaDB"
+  block:
+    - name: "Import MariaDB configuration file"
+      ansible.builtin.template:
+        src: "templates/50-server.cnf.j2"
+        dest: "{{ install_mariadb_config_path }}/50-server.cnf"
+        owner: "{{ install_mariadb_user }}"
+        group: "{{ install_mariadb_group }}"
+        mode: "0700"
+        lstrip_blocks: yes
+
+    - name: "Apply permissions on MariaDB conf dir"
+      ansible.builtin.file:
+        path: "{{ install_mariadb_confs_path }}"
+        state: directory
+        recurse: yes
+        owner: "{{ install_mariadb_user }}"
+        group: "{{ install_mariadb_group }}"
+        mode: "0700"
+
+    - name: "Edit basic service file"
+      loop:
+        - { as: "User=mysql", toBe: "User={{ install_mariadb_user }}"}
+        - { as: "Group=mysql", toBe: "Group={{ install_mariadb_group }}"}
+        - { as: "LimitNOFILE=32768", toBe: "LimitNOFILE=65456"}
+      loop_control:
+        loop_var: change
+      ansible.builtin.replace:
+        path: "/etc/systemd/system/multi-user.target.wants/mariadb.service"
+        regexp: "{{ change.as }}"
+        replace: "{{ change.toBe }}"
+        backup: no
+
+    - name: "Create log dirs"
+      register: output
+      changed_when: output.size < 0
+      ansible.builtin.file:
+        path: "{{ install_mariadb_log_path }}"
+        state: directory
+        recurse: yes
+        owner: "{{ install_mariadb_user }}"
+        group: "{{ install_mariadb_group }}"
+        mode: "0700"
+
+    - name: "Remove Galera cluster config"
+      when: not (install_mariadb_galera_cluster | default(false))
+      ansible.builtin.file:
+        path: "{{ install_mariadb_config_path }}/99-galera.cnf"
+        state: absent
+        recurse: yes
+
+- name: "Configure Galera Cluster"
+  when: install_mariadb_galera_cluster | default(false)
+  block:
+    - name: "Flush handlers"
+      ansible.builtin.meta: flush_handlers
+
+    - name: "Import MariaDB Galera configuration file"
+      register: galera_config_result
+      ansible.builtin.template:
+        src: "templates/99-galera.cnf.j2"
+        dest: "{{ install_mariadb_config_path }}/99-galera.cnf"
+        owner: "{{ install_mariadb_user }}"
+        group: "{{ install_mariadb_group }}"
+        mode: "0700"
+        lstrip_blocks: yes
+
+- name: "Remove Galera Cluster"
+  when: not (install_mariadb_galera_cluster | default(false))
+  block:
+    - name: "Check if the 99-galera.cnf file exist"
+      register: file_check
+      ansible.builtin.stat:
+        path: "{{ install_mariadb_config_path }}/99-galera.cnf"
+
+    - name: "Remove the 99-galera.cnf file"
+      ansible.builtin.file:
+        path: "{{ install_mariadb_config_path }}/99-galera.cnf"
+        state: absent
+
+- name: "Start or restart the cluster"
+  when: galera_config_result.changed and (install_mariadb_galera_cluster | default(false))
+  notify: "Enable and start MariaDB"
+  block:
+    - name: "Stop MariaDB"
+      register: install_mariadb_service_status
+      changed_when: not install_mariadb_service_status.state != "stopped"
+      throttle: 1
+      ansible.builtin.service:
+        name: "mariadb"
+        state: "stopped"
+
+    - name: "Check if the grastate.dat exist"
+      register: file_check
+      ansible.builtin.stat:
+        path: "/var/lib/mysql/grastate.dat"
+
+    - name: "File exist, bootstrap from seed not possible, restarting cluster"
+      when: file_check.stat.exists
+      block:
+        - name: "Check grastate file content"
+          check_mode: yes
+          register: grastate_state
+          ansible.builtin.lineinfile:
+            name: "/var/lib/mysql/grastate.dat"
+            line: "safe_to_bootstrap: 1"
+            state: present
+
+        - name: "Determine server to start cluster"
+          ansible.legacy.set_fact:
+            start_cluster_server: "{{ inventory_hostname }}"
+          when: (grastate_state is changed) or (grastate_state is failed)
+
+        - name: "Grastate is present, but no node are safe, take the seed host"
+          when: not (start_cluster_server | default(false))
+          delegate_to: "{{ install_mariadb_galera_cluster_seed_host }}"
+          ansible.builtin.replace:
+            path: "/var/lib/mysql/grastate.dat"
+            regexp: 'safe_to_bootstrap: 0'
+            replace: 'safe_to_bootstrap: 1'
+            backup: no
+
+        - name: "Set seed server as bootstrap server"
+          when: not (start_cluster_server | default(false))
+          ansible.legacy.set_fact:
+            start_cluster_server: "{{ install_mariadb_galera_cluster_seed_host }}"
+
+        - name: "Bootstrap Galera Cluster"
+          run_once: true
+          delegate_to: "{{ start_cluster_server }}"
+          register: output
+          changed_when: output.rc != 0
+          ansible.builtin.command: "galera_new_cluster"
+
+    - name: "File doesn't exist, bootstrap from seed possible"
+      when: not file_check.stat.exists
+      run_once: true
+      delegate_to: "{{ install_mariadb_galera_cluster_seed_host }}"
+      register: output
+      changed_when: output.rc != 0
+      ansible.builtin.command: "galera_new_cluster"
+
+- name: "Secure installation"
+  run_once: true
+  delegate_to: "{{ install_mariadb_galera_cluster_seed_host }}"
+  block:
+      - name: "Change root password"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ install_mariadb_secure_root_password }}';\""
+
+      - name: "Remove anonymous users"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"DELETE FROM mysql.user WHERE User='';\""
+
+      - name: "Disable root log remotely"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');\""
+
+      - name: "Drop tests databases"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"DROP DATABASE IF EXISTS test;\""
+
+      - name: "Drop tests databases"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"DELETE FROM mysql.db WHERE Db='test' OR Db='test\\\\_%';\""
+
+      - name: "Flush privileges"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"FLUSH PRIVILEGES;\""

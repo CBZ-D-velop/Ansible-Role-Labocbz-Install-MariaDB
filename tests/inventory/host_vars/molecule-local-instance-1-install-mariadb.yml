@@ -1,2 +1,4 @@
 ---
 ansible_ssh_port: 22
+
+inv_install_mariadb_server_id: 1
