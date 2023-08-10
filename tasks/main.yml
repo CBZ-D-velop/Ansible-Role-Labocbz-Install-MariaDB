@@ -142,29 +142,29 @@
       - name: "Change root password"
         register: output
         changed_when: output.rc != 0
-        ansible.builtin.shell: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ install_mariadb_secure_root_password }}';\""
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ install_mariadb_secure_root_password }}';\""
 
       - name: "Remove anonymous users"
         register: output
         changed_when: output.rc != 0
-        ansible.builtin.shell: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"DELETE FROM mysql.user WHERE User='';\""
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"DELETE FROM mysql.user WHERE User='';\""
 
       - name: "Disable root log remotely"
         register: output
         changed_when: output.rc != 0
-        ansible.builtin.shell: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');\""
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');\""
 
       - name: "Drop tests databases"
         register: output
         changed_when: output.rc != 0
-        ansible.builtin.shell: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"DROP DATABASE IF EXISTS test;\""
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"DROP DATABASE IF EXISTS test;\""
 
       - name: "Drop tests databases"
         register: output
         changed_when: output.rc != 0
-        ansible.builtin.shell: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"DELETE FROM mysql.db WHERE Db='test' OR Db='test\\\\_%';\""
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"DELETE FROM mysql.db WHERE Db='test' OR Db='test\\\\_%';\""
 
       - name: "Flush privileges"
         register: output
         changed_when: output.rc != 0
-        ansible.builtin.shell: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"FLUSH PRIVILEGES;\""
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb_secure_root_password }}' --execute=\"FLUSH PRIVILEGES;\""

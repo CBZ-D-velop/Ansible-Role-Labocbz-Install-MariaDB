@@ -12,9 +12,8 @@ inv_install_mariadb_port: 3306
 inv_install_mariadb_bind_address: "0.0.0.0"
 #inv_install_mariadb_server_id: 1
 
-inv_install_mariadb_max_connections: 200
-inv_install_mariadb_table_cache: 128
-inv_install_mariadb_thread_concurrency: 10
+inv_install_mariadb_max_connections: 500
+inv_install_mariadb_innodb_buffer_pool_size: 1
 
 inv_install_mariadb_general_log_file: "{{ inv_install_mariadb_log_path }}/mysql.log"
 inv_install_mariadb_general_log: 1
