@@ -44,7 +44,7 @@
           register: galera_cluster_size_result
           failed_when: galera_cluster_size_result.stdout != expected_cluster_size
           changed_when: galera_cluster_size_result.rc != 0
-          ansible.builtin.command: "mysql -u root --password='{{ inv_install_mariadb_secure_root_password }}' --execute=\"SHOW STATUS LIKE 'wsrep_cluster_size';\" | grep -oP '\\d+'"
+          ansible.builtin.shell: "mysql -u root --password='{{ inv_install_mariadb_secure_root_password }}' --execute=\"SHOW STATUS LIKE 'wsrep_cluster_size';\" | grep -oP '\\d+'"
 
         - name: "Get Galera Cluster State from MySQL"
           register: galera_cluster_synced_result

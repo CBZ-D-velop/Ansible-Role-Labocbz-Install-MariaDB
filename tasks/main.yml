@@ -28,6 +28,19 @@
         group: "{{ install_mariadb_group }}"
         mode: "0700"
 
+    - name: "Edit basic service file"
+      loop:
+        - { as: "User=mysql", toBe: "User={{ install_mariadb_user }}"}
+        - { as: "Group=mysql", toBe: "Group={{ install_mariadb_group }}"}
+        - { as: "LimitNOFILE=32768", toBe: "LimitNOFILE=65456"}
+      loop_control:
+        loop_var: change
+      ansible.builtin.replace:
+        path: "/etc/systemd/system/multi-user.target.wants/mariadb.service"
+        regexp: "{{ change.as }}"
+        replace: "{{ change.toBe }}"
+        backup: no
+
     - name: "Create log dirs"
       register: output
       changed_when: output.size < 0
