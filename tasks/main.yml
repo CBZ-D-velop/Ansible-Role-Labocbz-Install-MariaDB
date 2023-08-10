@@ -133,6 +133,8 @@
       when: not file_check.stat.exists
       run_once: true
       delegate_to: "{{ install_mariadb_galera_cluster_seed_host }}"
+      register: output
+      changed_when: output.rc != 0
       ansible.builtin.command: "galera_new_cluster"
 
 - name: "Secure installation"
