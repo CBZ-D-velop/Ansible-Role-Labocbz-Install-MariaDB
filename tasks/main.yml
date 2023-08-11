@@ -57,7 +57,6 @@
       ansible.builtin.file:
         path: "{{ install_mariadb_config_path }}/99-galera.cnf"
         state: absent
-        recurse: yes
 
 - name: "Configure Galera Cluster"
   when: install_mariadb_galera_cluster | default(false)
