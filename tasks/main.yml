@@ -153,6 +153,9 @@
   run_once: true
   delegate_to: "{{ install_mariadb_galera_cluster_seed_host }}"
   block:
+      - name: "Flush handlers"
+        ansible.builtin.meta: flush_handlers
+
       - name: "Change root password"
         register: output
         changed_when: output.rc != 0
