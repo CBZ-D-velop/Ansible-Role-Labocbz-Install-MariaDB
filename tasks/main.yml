@@ -2,7 +2,7 @@
 - name: "Install MariaDB"
   notify: "Enable and start MariaDB"
   ansible.builtin.package:
-    update_cache: false
+    update_cache: true
     name:
       - "mariadb-client"
       - "mariadb-server"
