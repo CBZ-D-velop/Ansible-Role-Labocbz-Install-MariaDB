@@ -52,27 +52,14 @@
         group: "{{ install_mariadb_group }}"
         mode: "0700"
 
-    - name: "Remove Galera cluster config"
-      when: not (install_mariadb_galera_cluster | default(false))
+    - name: "Fix permissions on /var/lib/mysql"
       ansible.builtin.file:
-        path: "{{ install_mariadb_config_path }}/99-galera.cnf"
-        state: absent
-
-- name: "Configure Galera Cluster"
-  when: install_mariadb_galera_cluster | default(false)
-  block:
-    - name: "Flush handlers"
-      ansible.builtin.meta: flush_handlers
-
-    - name: "Import MariaDB Galera configuration file"
-      register: galera_config_result
-      ansible.builtin.template:
-        src: "templates/99-galera.cnf.j2"
-        dest: "{{ install_mariadb_config_path }}/99-galera.cnf"
+        path: "/var/lib/mysql"
+        state: directory
+        recurse: yes
         owner: "{{ install_mariadb_user }}"
         group: "{{ install_mariadb_group }}"
         mode: "0700"
-        lstrip_blocks: yes
 
 - name: "Remove Galera Cluster"
   when: not (install_mariadb_galera_cluster | default(false))
@@ -88,7 +75,7 @@
         state: absent
 
 - name: "Start or restart the cluster"
-  when: galera_config_result.changed and (install_mariadb_galera_cluster | default(false))
+  when: install_mariadb_galera_cluster | default(false)
   notify: "Enable and start MariaDB"
   block:
     - name: "Stop MariaDB"
@@ -99,6 +86,15 @@
         name: "mariadb"
         state: "stopped"
 
+    - name: "Import MariaDB Galera configuration file"
+      ansible.builtin.template:
+        src: "templates/99-galera.cnf.j2"
+        dest: "{{ install_mariadb_config_path }}/99-galera.cnf"
+        owner: "{{ install_mariadb_user }}"
+        group: "{{ install_mariadb_group }}"
+        mode: "0700"
+        lstrip_blocks: yes
+
     - name: "Check if the grastate.dat exist"
       register: file_check
       ansible.builtin.stat:
@@ -107,21 +103,7 @@
     - name: "File exist, bootstrap from seed not possible, restarting cluster"
       when: file_check.stat.exists
       block:
-        - name: "Check grastate file content"
-          check_mode: yes
-          register: grastate_state
-          ansible.builtin.lineinfile:
-            name: "/var/lib/mysql/grastate.dat"
-            line: "safe_to_bootstrap: 1"
-            state: present
-
-        - name: "Determine server to start cluster"
-          ansible.legacy.set_fact:
-            start_cluster_server: "{{ inventory_hostname }}"
-          when: (grastate_state is changed) or (grastate_state is failed)
-
-        - name: "Grastate is present, but no node are safe, take the seed host"
-          when: not (start_cluster_server | default(false))
+        - name: "Grastate is present, no node are safe, take the seed host"
           delegate_to: "{{ install_mariadb_galera_cluster_seed_host }}"
           ansible.builtin.replace:
             path: "/var/lib/mysql/grastate.dat"
@@ -129,14 +111,9 @@
             replace: 'safe_to_bootstrap: 1'
             backup: no
 
-        - name: "Set seed server as bootstrap server"
-          when: not (start_cluster_server | default(false))
-          ansible.legacy.set_fact:
-            start_cluster_server: "{{ install_mariadb_galera_cluster_seed_host }}"
-
         - name: "Bootstrap Galera Cluster"
           run_once: true
-          delegate_to: "{{ start_cluster_server }}"
+          delegate_to: "{{ install_mariadb_galera_cluster_seed_host }}"
           register: output
           changed_when: output.rc != 0
           ansible.builtin.command: "galera_new_cluster"
