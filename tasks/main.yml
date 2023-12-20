@@ -133,6 +133,11 @@
       - name: "Flush handlers"
         ansible.builtin.meta: flush_handlers
 
+      - name: "Delay Mariadb starting"
+        ansible.builtin.wait_for:
+          delay: 30
+          timeout: 0
+
       - name: "Change root password"
         register: output
         changed_when: output.rc != 0
