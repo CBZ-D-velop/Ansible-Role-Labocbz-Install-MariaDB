@@ -109,46 +109,46 @@ Some vars a required to run this role:
 
 ```YAML
 ---
-install_mariadb_confs_path: "/etc/mysql"
-install_mariadb_config_path: "{{ install_mariadb_confs_path }}/mariadb.conf.d"
-install_mariadb_ssl_path: "{{ install_mariadb_confs_path }}/ssl"
-install_mariadb_log_path: "/var/log/mysql"
+install_mariadb__confs_path: "/etc/mysql"
+install_mariadb__config_path: "{{ install_mariadb__confs_path }}/mariadb.conf.d"
+install_mariadb__ssl_path: "{{ install_mariadb__confs_path }}/ssl"
+install_mariadb__log_path: "/var/log/mysql"
 
-install_mariadb_port: 3306
-install_mariadb_bind_address: "0.0.0.0"
-install_mariadb_server_id: 1
+install_mariadb__port: 3306
+install_mariadb__bind_address: "0.0.0.0"
+install_mariadb__server_id: 1
 
-install_mariadb_max_connections: 500
-install_mariadb_innodb_buffer_pool_size: 1
+install_mariadb__max_connections: 500
+install_mariadb__innodb_buffer_pool_size: 1
 
-install_mariadb_general_log_file: "{{ install_mariadb_log_path }}/mysql.log"
-install_mariadb_general_log: 1
-install_mariadb_log_error: "{{ install_mariadb_log_path }}/mysql-error.log"
-install_mariadb_log_bin: "{{ install_mariadb_log_path }}/mysql-bin.log"
-install_mariadb_expire_logs_days: 30
-install_mariadb_max_binlog_size: "100M"
+install_mariadb__general_log_file: "{{ install_mariadb__log_path }}/mysql.log"
+install_mariadb__general_log: 1
+install_mariadb__log_error: "{{ install_mariadb__log_path }}/mysql-error.log"
+install_mariadb__log_bin: "{{ install_mariadb__log_path }}/mysql-bin.log"
+install_mariadb__expire_logs_days: 30
+install_mariadb__max_binlog_size: "100M"
 
-install_mariadb_ssl: true
-install_mariadb_ssl_client_auth: true
-install_mariadb_ssl_ca: "{{ install_mariadb_ssl_path }}/ca.cert"
-install_mariadb_ssl_cert: "{{ install_mariadb_ssl_path }}/cert.pem"
-install_mariadb_ssl_key: "{{ install_mariadb_ssl_path }}/key.pem"
+install_mariadb__ssl: true
+install_mariadb__ssl_client_auth: true
+install_mariadb__ssl_ca: "{{ install_mariadb__ssl_path }}/ca.cert"
+install_mariadb__ssl_cert: "{{ install_mariadb__ssl_path }}/cert.pem"
+install_mariadb__ssl_key: "{{ install_mariadb__ssl_path }}/key.pem"
 
-install_mariadb_charset: "utf8mb4"
-install_mariadb_collation: "utf8mb4_general_ci"
+install_mariadb__charset: "utf8mb4"
+install_mariadb__collation: "utf8mb4_general_ci"
 
-install_mariadb_user: "mysql"
-install_mariadb_group: "mysql"
+install_mariadb__user: "mysql"
+install_mariadb__group: "mysql"
 
-install_mariadb_galera_cluster: true
-install_mariadb_galera_clustername: "my-Galera-cluster"
-install_mariadb_galera_node_name: "{{ inventory_hostname }}"
-install_mariadb_galera_node_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
-install_mariadb_galera_node_list:
+install_mariadb__galera_cluster: true
+install_mariadb__galera_clustername: "my-Galera-cluster"
+install_mariadb__galera_node_name: "{{ inventory_hostname }}"
+install_mariadb__galera_node_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+install_mariadb__galera_node_list:
   - "127.0.0.1"
-install_mariadb_galera_cluster_seed_host: "{{ inventory_hostname }}"
+install_mariadb__galera_cluster_seed_host: "{{ inventory_hostname }}"
 
-install_mariadb_secure_root_password: "myPass"
+install_mariadb__secure_root_password: "myPass"
 
 ```
 
@@ -161,50 +161,50 @@ In order to surchage vars, you have multiples possibilities but for mains cases 
 ```YAML
 # From inventory
 ---
-inv_prepare_host_users:
+inv_prepare_host__users:
   - login: "root"
     group: "mysql"
 
-inv_install_mariadb_confs_path: "/etc/mysql"
-inv_install_mariadb_config_path: "{{ inv_install_mariadb_confs_path }}/mariadb.conf.d"
-inv_install_mariadb_ssl_path: "{{ inv_install_mariadb_confs_path }}/ssl"
-inv_install_mariadb_log_path: "/var/log/mysql"
+inv_install_mariadb__confs_path: "/etc/mysql"
+inv_install_mariadb__config_path: "{{ inv_install_mariadb__confs_path }}/mariadb.conf.d"
+inv_install_mariadb__ssl_path: "{{ inv_install_mariadb__confs_path }}/ssl"
+inv_install_mariadb__log_path: "/var/log/mysql"
 
-inv_install_mariadb_port: 3306
-inv_install_mariadb_bind_address: "0.0.0.0"
-#inv_install_mariadb_server_id: 1
+inv_install_mariadb__port: 3306
+inv_install_mariadb__bind_address: "0.0.0.0"
+#inv_install_mariadb__server_id: 1
 
-inv_install_mariadb_max_connections: 500
-inv_install_mariadb_innodb_buffer_pool_size: 1
+inv_install_mariadb__max_connections: 500
+inv_install_mariadb__innodb_buffer_pool_size: 1
 
-inv_install_mariadb_general_log_file: "{{ inv_install_mariadb_log_path }}/mysql.log"
-inv_install_mariadb_general_log: 1
-inv_install_mariadb_log_error: "{{ inv_install_mariadb_log_path }}/mysql-error.log"
-inv_install_mariadb_log_bin: "{{ inv_install_mariadb_log_path }}/mysql-bin.log"
-inv_install_mariadb_expire_logs_days: 30
-inv_install_mariadb_max_binlog_size: "100M"
+inv_install_mariadb__general_log_file: "{{ inv_install_mariadb__log_path }}/mysql.log"
+inv_install_mariadb__general_log: 1
+inv_install_mariadb__log_error: "{{ inv_install_mariadb__log_path }}/mysql-error.log"
+inv_install_mariadb__log_bin: "{{ inv_install_mariadb__log_path }}/mysql-bin.log"
+inv_install_mariadb__expire_logs_days: 30
+inv_install_mariadb__max_binlog_size: "100M"
 
 
-inv_install_mariadb_ssl: true
-inv_install_mariadb_ssl_client_auth: true
-inv_install_mariadb_ssl_ca: "{{ inv_install_mariadb_ssl_path }}/my-mariadb-cluster.domain.tld/ca-chain.pem.crt"
-inv_install_mariadb_ssl_cert: "{{ inv_install_mariadb_ssl_path }}/my-mariadb-cluster.domain.tld/my-mariadb-cluster.domain.tld.pem.crt"
-inv_install_mariadb_ssl_key: "{{ inv_install_mariadb_ssl_path }}/my-mariadb-cluster.domain.tld/my-mariadb-cluster.domain.tld.pem.key"
+inv_install_mariadb__ssl: true
+inv_install_mariadb__ssl_client_auth: true
+inv_install_mariadb__ssl_ca: "{{ inv_install_mariadb__ssl_path }}/my-mariadb-cluster.domain.tld/ca-chain.pem.crt"
+inv_install_mariadb__ssl_cert: "{{ inv_install_mariadb__ssl_path }}/my-mariadb-cluster.domain.tld/my-mariadb-cluster.domain.tld.pem.crt"
+inv_install_mariadb__ssl_key: "{{ inv_install_mariadb__ssl_path }}/my-mariadb-cluster.domain.tld/my-mariadb-cluster.domain.tld.pem.key"
 
-inv_install_mariadb_charset: "utf8mb4"
-inv_install_mariadb_collation: "utf8mb4_general_ci"
+inv_install_mariadb__charset: "utf8mb4"
+inv_install_mariadb__collation: "utf8mb4_general_ci"
 
-inv_install_mariadb_galera_cluster: true
-inv_install_mariadb_galera_clustername: "my-Galera-cluster"
-inv_install_mariadb_galera_node_name: "{{ inventory_hostname }}"
-inv_install_mariadb_galera_node_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
-inv_install_mariadb_galera_node_list:
+inv_install_mariadb__galera_cluster: true
+inv_install_mariadb__galera_clustername: "my-Galera-cluster"
+inv_install_mariadb__galera_node_name: "{{ inventory_hostname }}"
+inv_install_mariadb__galera_node_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+inv_install_mariadb__galera_node_list:
   - "molecule-local-instance-1-install-mariadb"
   - "molecule-local-instance-2-install-mariadb"
   - "molecule-local-instance-3-install-mariadb"
-inv_install_mariadb_galera_cluster_seed_host: "molecule-local-instance-1-install-mariadb"
+inv_install_mariadb__galera_cluster_seed_host: "molecule-local-instance-1-install-mariadb"
 
-inv_install_mariadb_secure_root_password: "PN$^L8zP*wm@3q"
+inv_install_mariadb__secure_root_password: "PN$^L8zP*wm@3q"
 
 
 ```
@@ -224,35 +224,35 @@ To run this role, you can copy the molecule/default/converge.yml playbook and ad
   tags:
     - "labocbz.install_mariadb"
   vars:
-    install_mariadb_confs_path: "{{ inv_install_mariadb_confs_path }}"
-    install_mariadb_config_path: "{{ inv_install_mariadb_config_path }}"
-    install_mariadb_ssl_path: "{{ inv_install_mariadb_ssl_path }}"
-    install_mariadb_log_path: "{{ inv_install_mariadb_log_path }}"
-    install_mariadb_port: "{{ inv_install_mariadb_port }}"
-    install_mariadb_bind_address: "{{ inv_install_mariadb_bind_address }}"
-    install_mariadb_server_id: "{{ inv_install_mariadb_server_id }}"
-    install_mariadb_max_connections: "{{ inv_install_mariadb_max_connections }}"
-    install_mariadb_innodb_buffer_pool_size: "{{ inv_install_mariadb_innodb_buffer_pool_size }}"
-    install_mariadb_general_log_file: "{{ inv_install_mariadb_general_log_file }}"
-    install_mariadb_general_log: "{{ inv_install_mariadb_general_log }}"
-    install_mariadb_log_error: "{{ inv_install_mariadb_log_error }}"
-    install_mariadb_log_bin: "{{ inv_install_mariadb_log_bin }}"
-    install_mariadb_expire_logs_days: "{{ inv_install_mariadb_expire_logs_days }}"
-    install_mariadb_max_binlog_size: "{{ inv_install_mariadb_max_binlog_size }}"
-    install_mariadb_ssl: "{{ inv_install_mariadb_ssl }}"
-    install_mariadb_ssl_client_auth: "{{ inv_install_mariadb_ssl_client_auth }}"
-    install_mariadb_ssl_ca: "{{ inv_install_mariadb_ssl_ca }}"
-    install_mariadb_ssl_cert: "{{ inv_install_mariadb_ssl_cert }}"
-    install_mariadb_ssl_key: "{{ inv_install_mariadb_ssl_key }}"
-    install_mariadb_charset: "{{ inv_install_mariadb_charset }}"
-    install_mariadb_collation: "{{ inv_install_mariadb_collation }}"
-    install_mariadb_galera_cluster: "{{ inv_install_mariadb_galera_cluster }}"
-    install_mariadb_galera_node_list: "{{ inv_install_mariadb_galera_node_list }}"
-    install_mariadb_galera_clustername: "{{ inv_install_mariadb_galera_clustername }}"
-    install_mariadb_galera_node_name: "{{ inv_install_mariadb_galera_node_name }}"
-    install_mariadb_galera_node_address: "{{ inv_install_mariadb_galera_node_address }}"
-    install_mariadb_galera_cluster_seed_host: "{{ inv_install_mariadb_galera_cluster_seed_host }}"
-    install_mariadb_secure_root_password: "{{ inv_install_mariadb_secure_root_password }}"
+    install_mariadb__confs_path: "{{ inv_install_mariadb__confs_path }}"
+    install_mariadb__config_path: "{{ inv_install_mariadb__config_path }}"
+    install_mariadb__ssl_path: "{{ inv_install_mariadb__ssl_path }}"
+    install_mariadb__log_path: "{{ inv_install_mariadb__log_path }}"
+    install_mariadb__port: "{{ inv_install_mariadb__port }}"
+    install_mariadb__bind_address: "{{ inv_install_mariadb__bind_address }}"
+    install_mariadb__server_id: "{{ inv_install_mariadb__server_id }}"
+    install_mariadb__max_connections: "{{ inv_install_mariadb__max_connections }}"
+    install_mariadb__innodb_buffer_pool_size: "{{ inv_install_mariadb__innodb_buffer_pool_size }}"
+    install_mariadb__general_log_file: "{{ inv_install_mariadb__general_log_file }}"
+    install_mariadb__general_log: "{{ inv_install_mariadb__general_log }}"
+    install_mariadb__log_error: "{{ inv_install_mariadb__log_error }}"
+    install_mariadb__log_bin: "{{ inv_install_mariadb__log_bin }}"
+    install_mariadb__expire_logs_days: "{{ inv_install_mariadb__expire_logs_days }}"
+    install_mariadb__max_binlog_size: "{{ inv_install_mariadb__max_binlog_size }}"
+    install_mariadb__ssl: "{{ inv_install_mariadb__ssl }}"
+    install_mariadb__ssl_client_auth: "{{ inv_install_mariadb__ssl_client_auth }}"
+    install_mariadb__ssl_ca: "{{ inv_install_mariadb__ssl_ca }}"
+    install_mariadb__ssl_cert: "{{ inv_install_mariadb__ssl_cert }}"
+    install_mariadb__ssl_key: "{{ inv_install_mariadb__ssl_key }}"
+    install_mariadb__charset: "{{ inv_install_mariadb__charset }}"
+    install_mariadb__collation: "{{ inv_install_mariadb__collation }}"
+    install_mariadb__galera_cluster: "{{ inv_install_mariadb__galera_cluster }}"
+    install_mariadb__galera_node_list: "{{ inv_install_mariadb__galera_node_list }}"
+    install_mariadb__galera_clustername: "{{ inv_install_mariadb__galera_clustername }}"
+    install_mariadb__galera_node_name: "{{ inv_install_mariadb__galera_node_name }}"
+    install_mariadb__galera_node_address: "{{ inv_install_mariadb__galera_node_address }}"
+    install_mariadb__galera_cluster_seed_host: "{{ inv_install_mariadb__galera_cluster_seed_host }}"
+    install_mariadb__secure_root_password: "{{ inv_install_mariadb__secure_root_password }}"
   ansible.builtin.include_role:
     name: "labocbz.install_mariadb"
 ```
@@ -292,6 +292,18 @@ Here you can put your change to keep a trace of your work and decisions.
 ### 2023-12-14: System users
 
 * Role can now use system users and address groups
+
+### 2024-02-22: New CICD and fixes
+
+* Added support for Ubuntu 22
+* Added support for Debian 11/22
+* Edited vars for linting (role name and __)
+* Added generic support for Docker dind (can add used for obscures reasons ... user in use)
+* Fix idempotency
+* Added informations for UID and GID for user/groups
+* Added support for user password creation (on_create)
+* New CI, need work on tag and releases
+* CI use now Sonarqube
 
 ## Authors
 

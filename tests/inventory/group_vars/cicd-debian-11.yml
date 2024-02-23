@@ -1,0 +1,10 @@
+---
+inv_install_mariadb__galera_cluster: false
+#inv_install_mariadb__galera_clustername: "my-Galera-cluster"
+#inv_install_mariadb__galera_node_name: "{{ inventory_hostname }}"
+#inv_install_mariadb__galera_node_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+#inv_install_mariadb__galera_node_list:
+#  - "molecule-cicd-debian-11-instance-1-install-mariadb"
+#  - "molecule-cicd-debian-11-instance-2-install-mariadb"
+#  - "molecule-cicd-debian-11-instance-3-install-mariadb"
+#inv_install_mariadb__galera_cluster_seed_host: "molecule-cicd-debian-11-instance-1-install-mariadb"

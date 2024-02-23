@@ -17,10 +17,10 @@
 # this is only for the mysqld standalone daemon
 [mysqld]
 # === Required Settings ===
-user            = {{ install_mariadb_user }}
+user            = {{ install_mariadb__user }}
 pid-file        = /var/run/mysqld/mysqld.pid
 socket          = /var/run/mysqld/mysqld.sock
-port            = {{ install_mariadb_port }}
+port            = {{ install_mariadb__port }}
 basedir         = /usr
 datadir         = /var/lib/mysql
 tmpdir          = /tmp
@@ -34,7 +34,7 @@ skip_name_resolve
 # Instead of skip-networking the default is now to listen only on
 # localhost which is more compatible and is not less secure.
 #bind-address            = 127.0.0.1
-bind-address             = {{ install_mariadb_bind_address }}
+bind-address             = {{ install_mariadb__bind_address }}
 
 #
 # * Security Features
@@ -44,15 +44,15 @@ bind-address             = {{ install_mariadb_bind_address }}
 #
 # For generating SSL certificates I recommend the OpenSSL GUI "tinyca".
 #
-# ssl-ca=/etc/mysql/cacert.pem {{ install_mariadb_ssl_ca }}
-# ssl-cert=/etc/mysql/server-cert.pem {{ install_mariadb_ssl_cert }}
-# ssl-key=/etc/mysql/server-key.pem {{ install_mariadb_ssl_key }}
-{% if install_mariadb_ssl | default(false) %}
-{% if install_mariadb_ssl_client_auth | default(false) %}
-ssl-ca   = {{ install_mariadb_ssl_ca }}
+# ssl-ca=/etc/mysql/cacert.pem {{ install_mariadb__ssl_ca }}
+# ssl-cert=/etc/mysql/server-cert.pem {{ install_mariadb__ssl_cert }}
+# ssl-key=/etc/mysql/server-key.pem {{ install_mariadb__ssl_key }}
+{% if install_mariadb__ssl | default(false) %}
+{% if install_mariadb__ssl_client_auth | default(false) %}
+ssl-ca   = {{ install_mariadb__ssl_ca }}
 {% endif %}
-ssl-cert = {{ install_mariadb_ssl_cert }}
-ssl-key  = {{ install_mariadb_ssl_key }}
+ssl-cert = {{ install_mariadb__ssl_cert }}
+ssl-key  = {{ install_mariadb__ssl_key }}
 {% endif %}
 
 # === Error & Slow Query Logging ===
@@ -63,12 +63,12 @@ slow_query_log                  = 0     # Disabled on production
 # Both location gets rotated by the cronjob.
 # Be aware that this log type is a performance killer.
 # As of 5.1 you can enable the log at runtime!
-general_log_file        = {{ install_mariadb_general_log_file }}
-general_log             = {{ install_mariadb_general_log }}
+general_log_file        = {{ install_mariadb__general_log_file }}
+general_log             = {{ install_mariadb__general_log }}
 #
 # Error log - should be very few entries.
 #
-log_error = {{ install_mariadb_log_error }}
+log_error = {{ install_mariadb__log_error }}
 #
 # Enable the slow query log to see queries with especially long duration
 #slow_query_log_file    = /var/log/mysql/mariadb-slow.log
@@ -79,10 +79,10 @@ log_error = {{ install_mariadb_log_error }}
 # The following can be used as easy to replay backup logs or for replication.
 # note: if you are setting up a replication slave, see README.Debian about
 #       other settings you may need to change.
-server-id              = {{ install_mariadb_server_id }}
-log_bin                = {{ install_mariadb_log_bin }}
-expire_logs_days       = {{ install_mariadb_expire_logs_days }}
-max_binlog_size        = {{ install_mariadb_max_binlog_size }}
+server-id              = {{ install_mariadb__server_id }}
+log_bin                = {{ install_mariadb__log_bin }}
+expire_logs_days       = {{ install_mariadb__expire_logs_days }}
+max_binlog_size        = {{ install_mariadb__max_binlog_size }}
 #binlog_do_db          = include_database_name
 #binlog_ignore_db      = include_database_name
 
@@ -95,8 +95,8 @@ max_binlog_size        = {{ install_mariadb_max_binlog_size }}
 
 # === InnoDB Settings ===
 default_storage_engine          = InnoDB
-innodb_buffer_pool_instances    = {{ install_mariadb_innodb_buffer_pool_size }}     # Use 1 instance per 1GB of InnoDB pool size - max is 64
-innodb_buffer_pool_size         = {{ install_mariadb_innodb_buffer_pool_size }}G    # Use up to 70-80% of RAM
+innodb_buffer_pool_instances    = {{ install_mariadb__innodb_buffer_pool_size }}     # Use 1 instance per 1GB of InnoDB pool size - max is 64
+innodb_buffer_pool_size         = {{ install_mariadb__innodb_buffer_pool_size }}G    # Use up to 70-80% of RAM
 innodb_file_per_table           = 1
 innodb_flush_log_at_trx_commit  = 0
 innodb_flush_method             = O_DIRECT
@@ -128,7 +128,7 @@ low_priority_updates            = 1
 concurrent_insert               = 2
 
 # === Connection Settings ===
-max_connections                 = {{ install_mariadb_max_connections }}   # UPD - Important: high no. of connections = high RAM consumption
+max_connections                 = {{ install_mariadb__max_connections }}   # UPD - Important: high no. of connections = high RAM consumption
 
 back_log                        = 512
 thread_cache_size               = 100
