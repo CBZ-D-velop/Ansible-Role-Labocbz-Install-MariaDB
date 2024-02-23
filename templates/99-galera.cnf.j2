@@ -8,8 +8,8 @@
 # Mandatory Options
 wsrep_on=ON
 wsrep_provider=/usr/lib/galera/libgalera_smm.so
-wsrep_cluster_name="{{ install_mariadb_galera_clustername }}"
-wsrep_node_name="{{ install_mariadb_galera_node_name }}"
+wsrep_cluster_name="{{ install_mariadb__galera_clustername }}"
+wsrep_node_name="{{ install_mariadb__galera_node_name }}"
 wsrep_sst_method=rsync
 binlog_format=row
 default_storage_engine=InnoDB
@@ -17,6 +17,6 @@ innodb_autoinc_lock_mode=2
 innodb_buffer_pool_size=128M
 
 # Network Ports
-wsrep_node_address="{{ install_mariadb_galera_node_address }}"
-bind-address="{{ install_mariadb_bind_address }}"
-wsrep_cluster_address="gcomm://{{ install_mariadb_galera_node_list | join(',') }}"
+wsrep_node_address="{{ install_mariadb__galera_node_address }}"
+bind-address="{{ install_mariadb__bind_address }}"
+wsrep_cluster_address="gcomm://{{ install_mariadb__galera_node_list | join(',') }}"

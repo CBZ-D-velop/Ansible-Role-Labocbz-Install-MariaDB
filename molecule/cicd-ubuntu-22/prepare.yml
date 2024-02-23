@@ -1,27 +1,29 @@
 ---
 # if you have any prepararion task
 - name: "Prepare"
-  hosts: "cicd-debian-11"
+  hosts: "cicd-ubuntu-22"
   gather_facts: true
   tasks:
 
-    #- name: "Include cryptographic content var file"
-    #  ansible.builtin.include_vars: "../../tests/certs/main.yml"
+    - name: "Include cryptographic content var file"
+      ansible.builtin.include_vars: "../../tests/certs/main.yml"
 
-    #- name: "Include labocbz.prepare_host"
-    #  tags:
-    #    - "labocbz.prepare_host"
-    #  ansible.builtin.include_role:
-    #    name: "labocbz.prepare_host"
+    - name: "Include labocbz.prepare_host"
+      tags:
+        - "labocbz.prepare_host"
+      vars:
+        prepare_host__system_users: "{{ inv_prepare_host__system_users }}"
+      ansible.builtin.include_role:
+        name: "labocbz.prepare_host"
 
     - name: "Gather facts from all hosts"
       delegate_to: "{{ item }}"
       delegate_facts: true
-      loop: "{{ groups['cicd-debian-11'] }}"
+      loop: "{{ groups['cicd-ubuntu-22'] }}"
       ansible.builtin.setup:
 
     - name: "Edit /etc/hosts file to add all hosts"
-      loop: "{{ groups['cicd-debian-11'] }}"
+      loop: "{{ groups['cicd-ubuntu-22'] }}"
       loop_control:
         loop_var: host
       register: output
