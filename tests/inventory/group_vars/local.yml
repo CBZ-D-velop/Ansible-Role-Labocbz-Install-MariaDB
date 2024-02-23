@@ -1,4 +1,8 @@
 ---
+inv_install_mariadb__galera_cluster: true
+inv_install_mariadb__galera_clustername: "my-Galera-cluster"
+inv_install_mariadb__galera_node_name: "{{ inventory_hostname }}"
+inv_install_mariadb__galera_node_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
 inv_install_mariadb__galera_node_list:
   - "molecule-local-instance-1-install-mariadb"
   - "molecule-local-instance-2-install-mariadb"
