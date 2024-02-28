@@ -53,6 +53,7 @@
         mode: "0700"
 
     - name: "Fix permissions on /var/lib/mysql"
+      changed_when: false
       ansible.builtin.file:
         path: "/var/lib/mysql"
         state: directory
