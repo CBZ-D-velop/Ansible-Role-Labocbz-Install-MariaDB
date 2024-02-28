@@ -126,9 +126,19 @@
       changed_when: output.rc != 0
       ansible.builtin.command: "galera_new_cluster"
 
+- name: "Set seed host: Galera"
+  when: install_mariadb__galera_cluster_seed_host | default(false)
+  ansible.legacy.set_fact:
+    seed_host: "{{ install_mariadb__galera_cluster_seed_host }}"
+
+- name: "Set seed host: no Galera"
+  when: not (install_mariadb__galera_cluster_seed_host | default(false))
+  ansible.legacy.set_fact:
+    seed_host: "localhost"
+
 - name: "Secure installation"
   run_once: true
-  delegate_to: "{{ install_mariadb__galera_cluster_seed_host }}"
+  delegate_to: "{{ seed_host }}"
   block:
       - name: "Flush handlers"
         ansible.builtin.meta: flush_handlers
