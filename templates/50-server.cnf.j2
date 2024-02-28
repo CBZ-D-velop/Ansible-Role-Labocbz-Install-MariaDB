@@ -18,8 +18,8 @@
 [mysqld]
 # === Required Settings ===
 user            = {{ install_mariadb__user }}
-pid-file        = /var/run/mysqld/mysqld.pid
-socket          = /var/run/mysqld/mysqld.sock
+pid-file        = /run/mysqld/mysqld.pid
+socket          = /run/mysqld/mysqld.sock
 port            = {{ install_mariadb__port }}
 basedir         = /usr
 datadir         = /var/lib/mysql
