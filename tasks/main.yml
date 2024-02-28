@@ -130,14 +130,16 @@
   when: install_mariadb__galera_cluster_seed_host | default(false)
   ansible.legacy.set_fact:
     seed_host: "{{ install_mariadb__galera_cluster_seed_host }}"
+    run_once_secure: yes
 
 - name: "Set seed host: no Galera"
   when: not (install_mariadb__galera_cluster_seed_host | default(false))
   ansible.legacy.set_fact:
     seed_host: "localhost"
+    run_once_secure: no
 
 - name: "Secure installation"
-  run_once: true
+  run_once: "{{ run_once_secure }}"
   delegate_to: "{{ seed_host }}"
   block:
       - name: "Flush handlers"
