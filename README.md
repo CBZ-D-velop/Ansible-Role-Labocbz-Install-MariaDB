@@ -308,6 +308,7 @@ Here you can put your change to keep a trace of your work and decisions.
 ### 2024-02-28: Seed host
 
 * You can now start / secure the installation without le seed_host of Galera
+* Fix IDs
 
 ## Authors
 
