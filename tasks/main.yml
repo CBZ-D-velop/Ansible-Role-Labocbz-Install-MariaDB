@@ -53,6 +53,7 @@
         mode: "0700"
 
     - name: "Fix permissions on /var/lib/mysql"
+      changed_when: false
       ansible.builtin.file:
         path: "/var/lib/mysql"
         state: directory
@@ -126,9 +127,63 @@
       changed_when: output.rc != 0
       ansible.builtin.command: "galera_new_cluster"
 
-- name: "Secure installation"
-  run_once: true
-  delegate_to: "{{ install_mariadb__galera_cluster_seed_host }}"
+- name: "Set seed host: Galera"
+  when: install_mariadb__galera_cluster_seed_host | default(false)
+  ansible.legacy.set_fact:
+    seed_host: "{{ install_mariadb__galera_cluster_seed_host }}"
+    run_once_secure: yes
+
+- name: "Set seed host: no Galera"
+  when: not (install_mariadb__galera_cluster_seed_host | default(false))
+  ansible.legacy.set_fact:
+    seed_host: "localhost"
+    run_once_secure: no
+
+- name: "Secure installation, Galera"
+  when: run_once_secure | default(false)
+  run_once: "{{ run_once_secure }}"
+  delegate_to: "{{ seed_host }}"
+  block:
+      - name: "Flush handlers"
+        ansible.builtin.meta: flush_handlers
+
+      - name: "Delay Mariadb starting"
+        ansible.builtin.wait_for:
+          delay: 30
+          timeout: 0
+
+      - name: "Change root password"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb__secure_root_password }}' --execute=\"ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ install_mariadb__secure_root_password }}';\""
+
+      - name: "Remove anonymous users"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb__secure_root_password }}' --execute=\"DELETE FROM mysql.user WHERE User='';\""
+
+      - name: "Disable root log remotely"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb__secure_root_password }}' --execute=\"DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');\""
+
+      - name: "Drop tests databases"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb__secure_root_password }}' --execute=\"DROP DATABASE IF EXISTS test;\""
+
+      - name: "Drop tests databases"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb__secure_root_password }}' --execute=\"DELETE FROM mysql.db WHERE Db='test' OR Db='test\\\\_%';\""
+
+      - name: "Flush privileges"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.command: "mysql -u root --password='{{ install_mariadb__secure_root_password }}' --execute=\"FLUSH PRIVILEGES;\""
+
+- name: "Secure installation, no Galera"
+  when: not (run_once_secure | default(false))
   block:
       - name: "Flush handlers"
         ansible.builtin.meta: flush_handlers

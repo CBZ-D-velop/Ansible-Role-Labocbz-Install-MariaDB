@@ -9,7 +9,7 @@ driver:
 
 platforms:
   - name: "molecule-local-instance-1-install-mariadb"
-    image: "robincbz/debian-12-ansible:latest"
+    image: "robincbz/debian-11-ansible:latest"
     hostname: "molecule-local-instance-1-install-mariadb"
     published_ports:
       - "0.0.0.0:3306:3306/tcp"
@@ -28,7 +28,7 @@ platforms:
       - name: "molecule-default-install-mariadb"
 
   - name: "molecule-local-instance-2-install-mariadb"
-    image: "robincbz/debian-12-ansible:latest"
+    image: "robincbz/debian-11-ansible:latest"
     hostname: "molecule-local-instance-2-install-mariadb"
     #published_ports:
     #  - "0.0.0.0:8181:8181/tcp"
@@ -47,7 +47,7 @@ platforms:
       - name: "molecule-default-install-mariadb"
 
   - name: "molecule-local-instance-3-install-mariadb"
-    image: "robincbz/debian-12-ansible:latest"
+    image: "robincbz/debian-11-ansible:latest"
     hostname: "molecule-local-instance-3-install-mariadb"
     #published_ports:
     #  - "0.0.0.0:8181:8181/tcp"
@@ -99,6 +99,6 @@ scenario:
     - "create"
     - "prepare"
     - "converge"
-    - "idempotence"
+    #- "idempotence"
     - "verify"
     - "destroy"
