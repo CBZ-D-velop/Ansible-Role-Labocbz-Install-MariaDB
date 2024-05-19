@@ -310,6 +310,14 @@ Here you can put your change to keep a trace of your work and decisions.
 * You can now start / secure the installation without le seed_host of Galera
 * Fix IDs
 
+### 2024-05-19: New CI
+
+* Added Markdown lint to the CICD
+* Rework all Docker images
+* Change CICD vars convention
+* New workers
+* Removed all automation based on branch
+
 ## Authors
 
 * Lord Robin Crombez
